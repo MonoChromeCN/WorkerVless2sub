@@ -872,9 +872,9 @@ async function subHtml(request) {
 								
 								const host = vmessJson.host;
 								const uuid = vmessJson.id;
-								const path = vmessJson.path || '/';
+								const path = vmessJson.path || vmessJson.serviceName || '';
 								const sni = vmessJson.sni || host;
-								const type = vmessJson.type || 'none';
+								const type = vmessJson.net || vmessJson.type || 'ws'
 								const alpn = vmessJson.alpn || '';
 								const alterId = vmessJson.aid || 0;
 								const security = vmessJson.scy || 'auto';
@@ -1099,7 +1099,7 @@ export default {
 				return await subHtml(request);
 			}
 
-			if (!host || !uuid) {
+			if (!uuid || (!host && url.searchParams.get('type') !== 'grpc')) {
 				const responseText = `
 			缺少必填参数：host 和 uuid
 			Missing required parameters: host and uuid
@@ -1123,12 +1123,13 @@ export default {
 			}
 
 			if (!path || path.trim() === '') {
-				path = '/?ed=2560';
+				path = (type === 'grpc') ? 'grpc-service' : '/?ed=2560';
 			} else {
-				// 如果第一个字符不是斜杠，则在前面添加一个斜杠
-				path = (path[0] === '/') ? path : '/' + path;
-			}
-		}
+				// 只有非 grpc 协议才强制检查斜杠
+                if (type !== 'grpc') {
+                    path = (path[0] === '/') ? path : '/' + path;
+                }
+            }
 
 		// 构建订阅响应头对象
 		const responseHeaders = {
@@ -1280,9 +1281,35 @@ export default {
 					}
 
 					if (协议类型 == 'VMess') {
-						const vmessLink = `vmess://${utf8ToBase64(`{"v":"2","ps":"${addressid + EndPS}","add":"${address}","port":"${port}","id":"${uuid}","aid":"${额外ID}","scy":"${加密方式}","net":"ws","type":"${type}","host":"${host}","path":"${path}","tls":"","sni":"","alpn":"${encodeURIComponent(alpn)}","fp":""}`)}`;
+						const vmessLink = `vmess://${utf8ToBase64(JSON.stringify({
+                            "v": "2",
+                            "ps": addressid + EndPS,
+                            "add": address,
+                            "port": port,
+                            "id": uuid,
+                            "aid": 额外ID,
+                            "scy": 加密方式,
+                            "net": type, 
+                            "type": "none",
+                            "host": 伪装域名 || '',
+                            "path": (type === 'grpc') ? path : (path.startsWith('/') ? path : '/' + path),
+                            "tls": "tls",
+                            "sni": "",
+                            "alpn": decodeURIComponent(alpn),
+                            "fp": "",
+                            "allowInsecure": scv == 'true' ? '1' : '0',
+                            "fragment": "1,40-60,30-50,tlshello"
+                        }))}`;
 						return vmessLink;
 					} else {
+						let transportParams = "";
+                        if (type === 'grpc') {
+                            // 如果是 grpc，提取原本 path 里的内容作为 serviceName
+                            const sName = 最终路径.startsWith('/') ? 最终路径.substring(1) : 最终路径;
+                            transportParams = `type=grpc&serviceName=${encodeURIComponent(sName)}`;
+                        } else {
+                            transportParams = `type=${type}&host=${伪装域名}&path=${encodeURIComponent(最终路径)}`;
+                        }
 						const 为烈士Link = `${atob(atob('ZG14bGMzTTZMeTg9')) + uuid}@${address}:${port}?security=&type=${type}&host=${host}&path=${encodeURIComponent(path)}&encryption=none#${encodeURIComponent(addressid + EndPS)}`;
 						return 为烈士Link;
 					}
@@ -1379,13 +1406,47 @@ export default {
 				}
 
 				if (协议类型 == 'VMess') {
-					const vmessLink = `vmess://${utf8ToBase64(`{"v":"2","ps":"${addressid + 节点备注}","add":"${address}","port":"${port}","id":"${uuid}","aid":"${额外ID}","scy":"${加密方式}","net":"ws","type":"${type}","host":"${伪装域名}","path":"${最终路径}","tls":"tls","sni":"${sni}","alpn":"${encodeURIComponent(alpn)}","fp":"","allowInsecure":"${scv == 'true' ? '1' : '0'}","fragment":"1,40-60,30-50,tlshello"}`)}`;
+					const vmessLink = `vmess://${utf8ToBase64(JSON.stringify({
+                        "v": "2",
+                        "ps": addressid + 节点备注,
+                        "add": address,
+                        "port": port,
+                        "id": uuid,
+                        "aid": 额外ID,
+                        "scy": 加密方式,
+                        "net": type, 
+                        "type": "none",
+                        "host": 伪装域名 || '',
+                        "path": (type === 'grpc') ? path : (path.startsWith('/') ? path : '/' + path),
+                        "tls": "tls",
+                        "sni": sni || 伪装域名,
+                        "alpn": decodeURIComponent(alpn),
+                        "fp": "",
+                        "allowInsecure": scv == 'true' ? '1' : '0',
+                        "fragment": "1,40-60,30-50,tlshello"
+                    }))}`;
 					return vmessLink;
 				} else if (协议类型 == atob('VHJvamFu')) {
-					const 特洛伊Link = `${atob(atob('ZEhKdmFtRnVPaTh2')) + uuid}@${address}:${port}?security=tls&sni=${sni}&alpn=${encodeURIComponent(alpn)}&fp=random&type=${type}&host=${伪装域名}&path=${encodeURIComponent(最终路径) + (scv == 'true' ? '&allowInsecure=1' : '')}&fragment=${encodeURIComponent('1,40-60,30-50,tlshello')}#${encodeURIComponent(addressid + 节点备注)}`;
+                    let transportParams = "";
+                    if (type === 'grpc') {
+                        // 如果是 grpc，提取原本 path 里的内容作为 serviceName
+                        const sName = 最终路径.startsWith('/') ? 最终路径.substring(1) : 最终路径;
+                        transportParams = `type=grpc&serviceName=${encodeURIComponent(sName)}`;
+                    } else {
+                        transportParams = `type=${type}&host=${伪装域名}&path=${encodeURIComponent(最终路径)}`;
+                    }
+					const 特洛伊Link = `${atob(atob('ZEhKdmFtRnVPaTh2')) + uuid}@${address}:${port}?security=tls&sni=${sni}&alpn=${encodeURIComponent(alpn)}&fp=random&${transportParams}${xhttp}${scv == 'true' ? '&allowInsecure=1' : ''}&fragment=${encodeURIComponent('1,40-60,30-50,tlshello')}#${encodeURIComponent(addressid + 节点备注)}`;
 					return 特洛伊Link;
 				} else {
-					const 为烈士Link = `${atob(atob('ZG14bGMzTTZMeTg9')) + uuid}@${address}:${port}?security=tls&sni=${sni}&alpn=${encodeURIComponent(alpn)}&fp=random&type=${type}&host=${伪装域名}&path=${encodeURIComponent(最终路径) + xhttp + (scv == 'true' ? '&allowInsecure=1' : '')}&fragment=${encodeURIComponent('1,40-60,30-50,tlshello')}&encryption=none#${encodeURIComponent(addressid + 节点备注)}`;
+					let transportParams = "";
+					if (type === 'grpc') {
+                        // 如果是 grpc，提取原本 path 里的内容作为 serviceName
+                        const sName = 最终路径.startsWith('/') ? 最终路径.substring(1) : 最终路径;
+                        transportParams = `type=grpc&serviceName=${encodeURIComponent(sName)}`;
+                    } else {
+                        transportParams = `type=${type}&host=${伪装域名}&path=${encodeURIComponent(最终路径)}`;
+                    }
+					const 为烈士Link = `${atob(atob('ZG14bGMzTTZMeTg9')) + uuid}@${address}:${port}?security=tls&sni=${sni}&alpn=${encodeURIComponent(alpn)}&fp=random&${transportParams}${xhttp}${scv == 'true' ? '&allowInsecure=1' : ''}&fragment=${encodeURIComponent('1,40-60,30-50,tlshello')}&encryption=none#${encodeURIComponent(addressid + 节点备注)}`;
 					return 为烈士Link;
 				}
 
@@ -1463,4 +1524,5 @@ export default {
 		}
 	}
 };
+
 
