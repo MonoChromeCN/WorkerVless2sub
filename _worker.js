@@ -1123,10 +1123,12 @@ export default {
 			}
 
 			if (!path || path.trim() === '') {
-				path = '/?ed=2560';
+				path = (type === 'grpc') ? 'grpc-service' : '/?ed=2560';
 			} else {
-				// 如果第一个字符不是斜杠，则在前面添加一个斜杠
-				path = (path[0] === '/') ? path : '/' + path;
+				// 只有非 grpc 协议才强制检查斜杠
+				if (type !== 'grpc') {
+				    path = (path[0] === '/') ? path : '/' + path;
+				}
 			}
 		}
 
@@ -1524,6 +1526,7 @@ export default {
 		}
 	}
 };
+
 
 
 
