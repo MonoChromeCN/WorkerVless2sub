@@ -1283,24 +1283,24 @@ export default {
 
 					if (协议类型 == 'VMess') {
 						const vmessLink = `vmess://${utf8ToBase64(JSON.stringify({
- 					       "v": "2",
-  				           "ps": addressid + EndPS,
-  				           "add": address,
- 			               "port": port,
-  			               "id": uuid,
-   			               "aid": 额外ID,
-  			               "scy": 加密方式,
-  			               "net": type, 
-   			               "type": "none",
-  			               "host": host || '',
-    			           "path": (type === 'grpc') ? path : (path.startsWith('/') ? path : '/' + path),
-    			           "tls": "tls",
-    			           "sni": "",
-    			           "alpn": decodeURIComponent(alpn),
-    			           "fp": "",
-    			           "allowInsecure": scv == 'true' ? '1' : '0',
-    			           "fragment": "1,40-60,30-50,tlshello"
-			           }))}`;
+ 					        "v": "2",
+  				            "ps": addressid + EndPS,
+  				            "add": address,
+ 			                "port": port,
+  			                "id": uuid,
+   			                "aid": 额外ID,
+  			                "scy": 加密方式,
+  			                "net": type, 
+   			                "type": "none",
+  			                "host": host || '',
+    			            "path": (type === 'grpc') ? path : (path.startsWith('/') ? path : '/' + path),
+    			            "tls": "tls",
+    			            "sni": "",
+    			            "alpn": decodeURIComponent(alpn),
+    			            "fp": "",
+    			            "allowInsecure": scv == 'true' ? '1' : '0',
+    			            "fragment": "1,40-60,30-50,tlshello"
+			            }))}`;
 
 						return vmessLink;
 					} else {
@@ -1526,6 +1526,7 @@ export default {
 		}
 	}
 };
+
 
 
 
