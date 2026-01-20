@@ -883,7 +883,7 @@ async function subHtml(request) {
 								subLink = \`https://\${domain}/sub?host=\${host}&uuid=\${uuid}&path=\${encodeURIComponent(path)}&sni=\${sni}&type=\${type}&alpn=\${encodeURIComponent(alpn)}&alterid=\${alterId}&security=\${security}\`;
 							} else {
 								const uuid = link.split("//")[1].split("@")[0];
-								const search = link.substring(link.indexOf("?") + 1).split("#")[0];
+								const search = link.split("?")[1].split("#")[0];
 								const domain = window.location.hostname;
 								
 								subLink = \`https://\${domain}/sub?\${uuidType}=\${uuid}&\${search}\`;
