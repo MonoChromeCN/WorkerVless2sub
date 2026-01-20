@@ -1299,7 +1299,7 @@ export default {
     			            "tls": "tls",
     			            "sni": "",
     			            "alpn": decodeURIComponent(alpn),
-    			            "fp": "",
+    			            "fp": "random",
     			            "allowInsecure": scv == 'true' ? '1' : '0',
     			            "fragment": "1,40-60,30-50,tlshello"
 			            }))}`;
@@ -1425,7 +1425,7 @@ export default {
     				    "tls": "tls",
     				    "sni": sni || 伪装域名,
     				    "alpn": decodeURIComponent(alpn),
-    				    "fp": "",
+    				    "fp": "random",
     				    "allowInsecure": scv == 'true' ? '1' : '0',
     				    "fragment": "1,40-60,30-50,tlshello"
 				    }))}`;
@@ -1528,6 +1528,7 @@ export default {
 		}
 	}
 };
+
 
 
 
