@@ -951,6 +951,7 @@ export default {
 		let uuid = "";
 		let path = "";
 		let serviceName = "";
+		let fp = "";
 		let sni = "";
 		let type = "ws";
 		let scv = env.SCV || 'false';
@@ -1064,6 +1065,7 @@ export default {
 			uuid = url.searchParams.get('uuid') || url.searchParams.get('password') || url.searchParams.get('pw');
 			path = url.searchParams.get('path');
 			serviceName = url.searchParams.get('serviceName');
+			fp = url.searchParams.get('fp') || (协议类型 == 'VMess' ? '' : 'random');
 			sni = url.searchParams.get('sni') || host;
 			type = url.searchParams.get('type') || type;
 			scv = url.searchParams.get('allowInsecure') == '1' ? 'true' : (url.searchParams.get('scv') || scv);
@@ -1299,7 +1301,7 @@ export default {
     			            "tls": "tls",
     			            "sni": "",
     			            "alpn": decodeURIComponent(alpn),
-    			            "fp": "random",
+    			            "fp": fp,
     			            "allowInsecure": scv == 'true' ? '1' : '0',
     			            "fragment": "1,40-60,30-50,tlshello"
 			            }))}`;
@@ -1425,7 +1427,7 @@ export default {
     				    "tls": "tls",
     				    "sni": sni || 伪装域名,
     				    "alpn": decodeURIComponent(alpn),
-    				    "fp": "random",
+    				    "fp": fp,
     				    "allowInsecure": scv == 'true' ? '1' : '0',
     				    "fragment": "1,40-60,30-50,tlshello"
 				    }))}`;
@@ -1439,7 +1441,7 @@ export default {
 					} else {
     					transportParams = `type=${type}&host=${伪装域名}&path=${encodeURIComponent(最终路径)}`;
 					}
-					const 特洛伊Link = `${atob(atob('ZEhKdmFtRnVPaTh2')) + uuid}@${address}:${port}?security=tls&sni=${sni}&alpn=${encodeURIComponent(alpn)}&fp=random&${transportParams}${xhttp}${scv == 'true' ? '&allowInsecure=1' : ''}&fragment=${encodeURIComponent('1,40-60,30-50,tlshello')}#${encodeURIComponent(addressid + 节点备注)}`;
+					const 特洛伊Link = `${atob(atob('ZEhKdmFtRnVPaTh2')) + uuid}@${address}:${port}?security=tls&sni=${sni}&alpn=${encodeURIComponent(alpn)}&fp=random&${transportParams}${xhttp}${scv == 'true' ? '&allowInsecure=1' : ''}&fragment=${encodeURIComponent('1,40-60,30-50,tlshello')}&fp=${fp}#${encodeURIComponent(addressid + 节点备注)}`;
 					return 特洛伊Link;
 				} else {
 					let transportParams = "";
@@ -1450,7 +1452,7 @@ export default {
 					} else {
     					transportParams = `type=${type}&host=${伪装域名}&path=${encodeURIComponent(最终路径)}`;
 					}
-					const 为烈士Link = `${atob(atob('ZG14bGMzTTZMeTg9')) + uuid}@${address}:${port}?security=tls&sni=${sni}&alpn=${encodeURIComponent(alpn)}&fp=random&${transportParams}${xhttp}${scv == 'true' ? '&allowInsecure=1' : ''}&fragment=${encodeURIComponent('1,40-60,30-50,tlshello')}&encryption=none#${encodeURIComponent(addressid + 节点备注)}`;
+					const 为烈士Link = `${atob(atob('ZG14bGMzTTZMeTg9')) + uuid}@${address}:${port}?security=tls&sni=${sni}&alpn=${encodeURIComponent(alpn)}&fp=random&${transportParams}${xhttp}${scv == 'true' ? '&allowInsecure=1' : ''}&fragment=${encodeURIComponent('1,40-60,30-50,tlshello')}&fp=${fp}&encryption=none#${encodeURIComponent(addressid + 节点备注)}`;
 					return 为烈士Link;
 				}
 
@@ -1528,6 +1530,7 @@ export default {
 		}
 	}
 };
+
 
 
 
