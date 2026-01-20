@@ -1062,6 +1062,7 @@ export default {
 			host = url.searchParams.get('host');
 			uuid = url.searchParams.get('uuid') || url.searchParams.get('password') || url.searchParams.get('pw');
 			path = url.searchParams.get('path');
+			serviceName = url.searchParams.get('serviceName');
 			sni = url.searchParams.get('sni') || host;
 			type = url.searchParams.get('type') || type;
 			scv = url.searchParams.get('allowInsecure') == '1' ? 'true' : (url.searchParams.get('scv') || scv);
@@ -1123,7 +1124,7 @@ export default {
 			}
 
 			if (!path || path.trim() === '') {
-				path = (type === 'grpc') ? 'grpc-service' : '/?ed=2560';
+				path = (type === 'grpc') ? serviceName : '/?ed=2560';
 			} else {
 				// 只有非 grpc 协议才强制检查斜杠
 				if (type !== 'grpc') {
@@ -1526,6 +1527,7 @@ export default {
 		}
 	}
 };
+
 
 
 
