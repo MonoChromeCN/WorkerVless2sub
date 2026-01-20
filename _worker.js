@@ -1140,7 +1140,7 @@ export default {
 			//"Subscription-Userinfo": `upload=${UD}; download=${UD}; total=${total}; expire=${expire}`,
 		};
 
-		if (host.toLowerCase().includes('notls') || host.toLowerCase().includes('worker') || host.toLowerCase().includes('trycloudflare')) noTLS = 'true';
+		if (host && (host.toLowerCase().includes('notls') || host.toLowerCase().includes('worker') || host.toLowerCase().includes('trycloudflare'))) noTLS = 'true';
 		noTLS = env.NOTLS || noTLS;
 		let subConverterUrl = generateFakeInfo(url.href, uuid, host);
 		const isSubConverterRequest = request.headers.get('subconverter-request') || request.headers.get('subconverter-version') || userAgent.includes('subconverter');
@@ -1172,7 +1172,7 @@ export default {
 			}
 			subConverterUrl = `${subProtocol}://${subConverter}/sub?target=singbox&url=${encodeURIComponent(subConverterUrl)}&insert=false&config=${encodeURIComponent(subConfig)}&emoji=true&list=false&tfo=false&scv=${scv}&fdn=false&sort=false&new_name=true`;
 		} else {
-			if (host.includes('workers.dev')) {
+			if (host && host.includes('workers.dev')) {
 				if (临时中转域名接口) {
 					try {
 						const response = await fetch(临时中转域名接口);
@@ -1526,6 +1526,7 @@ export default {
 		}
 	}
 };
+
 
 
 
