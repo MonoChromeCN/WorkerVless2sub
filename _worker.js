@@ -1280,10 +1280,37 @@ export default {
 					}
 
 					if (协议类型 == 'VMess') {
-						const vmessLink = `vmess://${utf8ToBase64(`{"v":"2","ps":"${addressid + EndPS}","add":"${address}","port":"${port}","id":"${uuid}","aid":"${额外ID}","scy":"${加密方式}","net":"ws","type":"${type}","host":"${host}","path":"${path}","tls":"","sni":"","alpn":"${encodeURIComponent(alpn)}","fp":""}`)}`;
+						const vmessLink = `vmess://${utf8ToBase64(JSON.stringify({
+ 					       "v": "2",
+  				           "ps": addressid + EndPS,
+  				           "add": address,
+ 			               "port": port,
+  			               "id": uuid,
+   			               "aid": 额外ID,
+  			               "scy": 加密方式,
+  			               "net": type, 
+   			               "type": "none",
+  			               "host": 伪装域名 || '',
+    			           "path": (type === 'grpc') ? path : (path.startsWith('/') ? path : '/' + path),
+    			           "tls": "tls",
+    			           "sni": "",
+    			           "alpn": decodeURIComponent(alpn),
+    			           "fp": "",
+    			           "allowInsecure": scv == 'true' ? '1' : '0',
+    			           "fragment": "1,40-60,30-50,tlshello"
+			           }))}`;
+
 						return vmessLink;
 					} else {
-						const 为烈士Link = `${atob(atob('ZG14bGMzTTZMeTg9')) + uuid}@${address}:${port}?security=&type=${type}&host=${host}&path=${encodeURIComponent(path)}&encryption=none#${encodeURIComponent(addressid + EndPS)}`;
+						let transportParams = "";
+                        if (type === 'grpc') {
+                            // 如果是 grpc，提取原本 path 里的内容作为 serviceName
+                            const sName = path.startsWith('/') ? path.substring(1) : path;
+                            transportParams = `type=grpc&serviceName=${encodeURIComponent(sName)}`;
+                        } else {
+                            transportParams = `type=${type}&host=${伪装域名}&path=${encodeURIComponent(path)}`;
+                        }
+						const 为烈士Link = `${atob(atob('ZG14bGMzTTZMeTg9')) + uuid}@${address}:${port}?security=&${transportParams}&encryption=none#${encodeURIComponent(addressid + EndPS)}`;
 						return 为烈士Link;
 					}
 
@@ -1463,4 +1490,5 @@ export default {
 		}
 	}
 };
+
 
