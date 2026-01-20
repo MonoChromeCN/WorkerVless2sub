@@ -1124,11 +1124,11 @@ export default {
 			}
 
 			if (!path || path.trim() === '') {
-				path = (type === 'grpc') ? serviceName : '/?ed=2560';
-			} else {
-				// 只有非 grpc 协议才强制检查斜杠
-				if (type !== 'grpc') {
-				    path = (path[0] === '/') ? path : '/' + path;
+				// 如果是 grpc 协议，优先使用 serviceName，如果没有 serviceName 才用默认值
+                if (type === 'grpc') {
+			    	path = serviceName ? serviceName : 'grpc-service';
+				} else {
+				    path = '/?ed=2560';
 				}
 			}
 		}
@@ -1527,6 +1527,7 @@ export default {
 		}
 	}
 };
+
 
 
 
