@@ -950,6 +950,7 @@ export default {
 		let host = "";
 		let uuid = "";
 		let path = "";
+		let serviceName = "";
 		let sni = "";
 		let type = "ws";
 		let scv = env.SCV || 'false';
@@ -1527,6 +1528,7 @@ export default {
 		}
 	}
 };
+
 
 
 
