@@ -1290,7 +1290,7 @@ export default {
   			               "scy": 加密方式,
   			               "net": type, 
    			               "type": "none",
-  			               "host": 伪装域名 || '',
+  			               "host": host || '',
     			           "path": (type === 'grpc') ? path : (path.startsWith('/') ? path : '/' + path),
     			           "tls": "tls",
     			           "sni": "",
@@ -1406,13 +1406,47 @@ export default {
 				}
 
 				if (协议类型 == 'VMess') {
-					const vmessLink = `vmess://${utf8ToBase64(`{"v":"2","ps":"${addressid + 节点备注}","add":"${address}","port":"${port}","id":"${uuid}","aid":"${额外ID}","scy":"${加密方式}","net":"ws","type":"${type}","host":"${伪装域名}","path":"${最终路径}","tls":"tls","sni":"${sni}","alpn":"${encodeURIComponent(alpn)}","fp":"","allowInsecure":"${scv == 'true' ? '1' : '0'}","fragment":"1,40-60,30-50,tlshello"}`)}`;
+					const vmessLink = `vmess://${utf8ToBase64(JSON.stringify({
+    			    	"v": "2",
+    				    "ps": addressid + 节点备注,
+    				    "add": address,
+    				    "port": port,
+    				    "id": uuid,
+    				    "aid": 额外ID,
+    				    "scy": 加密方式,
+    				    "net": type, 
+    				    "type": "none",
+    				    "host": 伪装域名 || '',
+    				    "path": (type === 'grpc') ? path : (path.startsWith('/') ? path : '/' + path),
+    				    "tls": "tls",
+    				    "sni": sni || 伪装域名,
+    				    "alpn": decodeURIComponent(alpn),
+    				    "fp": "",
+    				    "allowInsecure": scv == 'true' ? '1' : '0',
+    				    "fragment": "1,40-60,30-50,tlshello"
+				    }))}`;
 					return vmessLink;
 				} else if (协议类型 == atob('VHJvamFu')) {
-					const 特洛伊Link = `${atob(atob('ZEhKdmFtRnVPaTh2')) + uuid}@${address}:${port}?security=tls&sni=${sni}&alpn=${encodeURIComponent(alpn)}&fp=random&type=${type}&host=${伪装域名}&path=${encodeURIComponent(最终路径) + (scv == 'true' ? '&allowInsecure=1' : '')}&fragment=${encodeURIComponent('1,40-60,30-50,tlshello')}#${encodeURIComponent(addressid + 节点备注)}`;
+					let transportParams = "";
+					if (type === 'grpc') {
+    					// 如果是 grpc，提取原本 path 里的内容作为 serviceName
+    					const sName = 最终路径.startsWith('/') ? 最终路径.substring(1) : 最终路径;
+    					transportParams = `type=grpc&serviceName=${encodeURIComponent(sName)}`;
+					} else {
+    					transportParams = `type=${type}&host=${伪装域名}&path=${encodeURIComponent(最终路径)}`;
+					}
+					const 特洛伊Link = `${atob(atob('ZEhKdmFtRnVPaTh2')) + uuid}@${address}:${port}?security=tls&sni=${sni}&alpn=${encodeURIComponent(alpn)}&fp=random&${transportParams}${xhttp}${scv == 'true' ? '&allowInsecure=1' : ''}&fragment=${encodeURIComponent('1,40-60,30-50,tlshello')}#${encodeURIComponent(addressid + 节点备注)}`;
 					return 特洛伊Link;
 				} else {
-					const 为烈士Link = `${atob(atob('ZG14bGMzTTZMeTg9')) + uuid}@${address}:${port}?security=tls&sni=${sni}&alpn=${encodeURIComponent(alpn)}&fp=random&type=${type}&host=${伪装域名}&path=${encodeURIComponent(最终路径) + xhttp + (scv == 'true' ? '&allowInsecure=1' : '')}&fragment=${encodeURIComponent('1,40-60,30-50,tlshello')}&encryption=none#${encodeURIComponent(addressid + 节点备注)}`;
+					let transportParams = "";
+					if (type === 'grpc') {
+    					// 如果是 grpc，提取原本 path 里的内容作为 serviceName
+    					const sName = 最终路径.startsWith('/') ? 最终路径.substring(1) : 最终路径;
+    					transportParams = `type=grpc&serviceName=${encodeURIComponent(sName)}`;
+					} else {
+    					transportParams = `type=${type}&host=${伪装域名}&path=${encodeURIComponent(最终路径)}`;
+					}
+					const 为烈士Link = `${atob(atob('ZG14bGMzTTZMeTg9')) + uuid}@${address}:${port}?security=tls&sni=${sni}&alpn=${encodeURIComponent(alpn)}&fp=random&${transportParams}${xhttp}${scv == 'true' ? '&allowInsecure=1' : ''}&fragment=${encodeURIComponent('1,40-60,30-50,tlshello')}&encryption=none#${encodeURIComponent(addressid + 节点备注)}`;
 					return 为烈士Link;
 				}
 
@@ -1490,5 +1524,6 @@ export default {
 		}
 	}
 };
+
 
 
